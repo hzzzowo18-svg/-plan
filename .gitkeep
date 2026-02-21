@@ -1,0 +1,703 @@
+/workspace/-plan$ /bin/bash -lc 'pwd && rg --files'
+/workspace/-plan
+/workspace/-plan$ /bin/bash -lc 'find . -maxdepth 3 -type f'
+./.git/info/exclude
+./.git/packed-refs
+./.git/description
+./.git/FETCH_HEAD
+./.git/hooks/sendemail-validate.sample
+./.git/hooks/pre-rebase.sample
+./.git/hooks/prepare-commit-msg.sample
+./.git/hooks/pre-receive.sample
+./.git/hooks/fsmonitor-watchman.sample
+./.git/hooks/post-update.sample
+./.git/hooks/applypatch-msg.sample
+./.git/hooks/pre-merge-commit.sample
+./.git/hooks/pre-push.sample
+./.git/hooks/pre-commit.sample
+./.git/hooks/update.sample
+./.git/hooks/commit-msg.sample
+./.git/hooks/pre-applypatch.sample
+./.git/hooks/push-to-checkout.sample
+./.git/config
+./.git/logs/HEAD
+./.git/index
+./.git/HEAD
+./.gitkeep
+/workspace/-plan$ /bin/bash -lc 'find .. -name AGENTS.md -print'
+/workspace/-plan$ /bin/bash -lc 'cat > index.html <<'"'"'EOF'"'"'
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>工作日程与每日总结</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>工作日程与每日总结</h1>
+        <p>把计划写下来、把结果沉淀下来，让每一天都更高效。</p>
+      </header>
+
+      <section class="card">
+        <h2>今日计划</h2>
+        <form id="task-form" class="task-form">
+          <input id="task-input" type="text" placeholder="输入待办事项，例如：10:00 与客户开会" required />
+          <button type="submit">添加</button>
+        </form>
+        <ul id="task-list" class="task-list"></ul>
+      </section>
+
+      <section class="card summary-card">
+        <h2>每日总结</h2>
+        <label for="summary-input">今天的收获、问题和明日改进：</label>
+        <textarea
+          id="summary-input"
+          rows="8"
+          placeholder="例如：\n1. 完成了项目A的需求评审\n2. 遇到的阻碍：...\n3. 明天优先事项：..."
+        ></textarea>
+        <button id="save-summary" class="save-btn">保存总结</button>
+        <p id="save-tip" class="save-tip" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <template id="task-template">
+      <li class="task-item">
+        <label>
+          <input type="checkbox" class="task-checkbox" />
+          <span class="task-text"></span>
+        </label>
+        <button class="delete-btn" aria-label="删除任务">删除</button>
+      </li>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+EOF'
+/workspace/-plan$ /bin/bash -lc 'cat > styles.css <<'"'"'EOF'"'"'
+:root {
+  color-scheme: light;
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --primary: #3264ff;
+  --primary-dark: #244fd4;
+  --text: #1f2a44;
+  --muted: #7280a7;
+  --border: #dce3f1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  background: linear-gradient(160deg, #eef2ff, var(--bg));
+  color: var(--text);
+}
+
+.container {
+  width: min(920px, 92vw);
+  margin: 2rem auto 3rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+header p {
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+
+.card {
+  margin-top: 1.5rem;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 1.2rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 30px rgba(50, 100, 255, 0.08);
+}
+
+.task-form {
+  display: flex;
+  gap: 0.8rem;
+  margin: 0.8rem 0 1rem;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  color: var(--text);
+  background: #fdfdff;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: 2px solid color-mix(in srgb, var(--primary), white 70%);
+  border-color: var(--primary);
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.8rem 1.1rem;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+}
+
+.task-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.delete-btn {
+  background: #eef2ff;
+  color: #43538f;
+  padding: 0.45rem 0.7rem;
+}
+
+.delete-btn:hover {
+  background: #dbe3ff;
+}
+
+.summary-card label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+}
+
+.save-btn {
+  margin-top: 0.75rem;
+}
+
+.save-tip {
+  min-height: 1.2rem;
+  margin-bottom: 0;
+  color: #1a7f44;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 600px) {
+  .task-form {
+    flex-direction: column;
+  }
+}
+EOF'
+/workspace/-plan$ /bin/bash -lc 'cat > app.js <<'"'"'EOF'"'"'
+const TASKS_KEY = "daily-planner-tasks";
+const SUMMARY_KEY = "daily-planner-summary";
+
+const taskForm = document.querySelector("#task-form");
+const taskInput = document.querySelector("#task-input");
+const taskList = document.querySelector("#task-list");
+const taskTemplate = document.querySelector("#task-template");
+const summaryInput = document.querySelector("#summary-input");
+const saveSummaryBtn = document.querySelector("#save-summary");
+const saveTip = document.querySelector("#save-tip");
+
+let tasks = loadTasks();
+summaryInput.value = localStorage.getItem(SUMMARY_KEY) || "";
+renderTasks();
+
+taskForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const text = taskInput.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  tasks.unshift({
+    id: crypto.randomUUID(),
+    text,
+    done: false,
+  });
+
+  saveTasks();
+  renderTasks();
+  taskInput.value = "";
+  taskInput.focus();
+});
+
+saveSummaryBtn.addEventListener("click", () => {
+  localStorage.setItem(SUMMARY_KEY, summaryInput.value.trim());
+  saveTip.textContent = `已保存：${new Date().toLocaleTimeString("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })}`;
+});
+
+function loadTasks() {
+  try {
+    return JSON.parse(localStorage.getItem(TASKS_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveTasks() {
+  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+}
+
+function renderTasks() {
+  taskList.innerHTML = "";
+
+  if (tasks.length === 0) {
+    const empty = document.createElement("li");
+    empty.textContent = "还没有任务，先写下今天最重要的三件事吧。";
+    empty.style.color = "#7280a7";
+    taskList.appendChild(empty);
+    return;
+  }
+
+  tasks.forEach((task) => {
+    const fragment = taskTemplate.content.cloneNode(true);
+    const item = fragment.querySelector(".task-item");
+    const checkbox = fragment.querySelector(".task-checkbox");
+    const text = fragment.querySelector(".task-text");
+    const deleteBtn = fragment.querySelector(".delete-btn");
+
+    text.textContent = task.text;
+    checkbox.checked = task.done;
+    item.classList.toggle("completed", task.done);
+
+    checkbox.addEventListener("change", () => {
+      task.done = checkbox.checked;
+      item.classList.toggle("completed", task.done);
+      saveTasks();
+    });
+
+    deleteBtn.addEventListener("click", () => {
+      tasks = tasks.filter((value) => value.id !== task.id);
+      saveTasks();
+      renderTasks();
+    });
+
+    taskList.appendChild(fragment);
+  });
+}
+EOF'
+/workspace/-plan$ /bin/bash -lc 'cat > README.md <<'"'"'EOF'"'"'
+# 工作日程与每日总结
+
+一个轻量的网页工具，帮助你记录当天日程、跟踪任务完成情况，并沉淀每日总结。
+
+## 功能
+
+- 添加今日待办任务
+- 勾选任务完成状态
+- 删除不再需要的任务
+- 填写并保存每日总结
+- 自动使用浏览器 `localStorage` 持久化内容
+
+## 本地运行
+
+直接用浏览器打开 `index.html` 即可使用。
+
+如果你希望通过本地服务打开，也可以运行：
+
+```bash
+python3 -m http.server 8000
+```
+
+然后访问 <http://localhost:8000>。
+EOF'
+/workspace/-plan$ /bin/bash -lc 'python3 -m http.server 8000 >/tmp/plan_server.log 2>&1 & echo $!'
+3569
+/workspace/-plan$ /bin/bash -lc 'curl -I http://127.0.0.1:8000'
+% Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (7) Failed to connect to 127.0.0.1 port 8000 after 0 ms: Couldn't connect to server
+/workspace/-plan$ /bin/bash -lc 'cat /tmp/plan_server.log'
+/workspace/-plan$ /bin/bash -lc 'python3 --version && python3 -m http.server 8000'
+/workspace/-plan$ /bin/bash -lc 'node --check app.js'
+/workspace/-plan$ /bin/bash -lc 'python3 -m http.server 8000 >/tmp/plan_server.log 2>&1 & SERVER_PID=$!; sleep 1; curl -I http://127.0.0.1:8000; kill $SERVER_PID'
+% Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+HTTP/1.0 200 OK    0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+Server: SimpleHTTP/0.6 Python/3.10.19
+Date: Sat, 21 Feb 2026 15:58:01 GMT
+Content-type: text/html
+Content-Length: 1716
+Last-Modified: Sat, 21 Feb 2026 15:55:23 GMT
+
+  0  1716    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+/bin/bash: line 1: kill: (3765) - No such process
+/workspace/-plan$ /bin/bash -lc 'pkill -f "http.server 8000" || true; python3 -m http.server 8000 >/tmp/plan_server.log 2>&1 & sleep 1; curl -I http://127.0.0.1:8000; pkill -f "http.server 8000"'
+Python 3.10.19
+127.0.0.1 - - [21/Feb/2026 15:58:01] "HEAD / HTTP/1.1" 200 -
+/workspace/-plan$ /bin/bash -lc 'python3 -m http.server 8001 >/tmp/plan_server.log 2>&1 & SERVER_PID=$!; sleep 1; curl -I http://127.0.0.1:8001; kill $SERVER_PID || true'
+% Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0  1716    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.10.19
+Date: Sat, 21 Feb 2026 15:58:08 GMT
+Content-type: text/html
+Content-Length: 1716
+Last-Modified: Sat, 21 Feb 2026 15:55:23 GMT
+/workspace/-plan$ /bin/bash -lc 'git status --short'
+?? README.md
+?? app.js
+?? index.html
+?? styles.css
+/workspace/-plan$ /bin/bash -lc 'git add README.md app.js index.html styles.css && git commit -m "feat: add daily planner and summary web page"'
+[work 1917210] feat: add daily planner and summary web page
+ 4 files changed, 310 insertions(+)
+ create mode 100644 README.md
+ create mode 100644 app.js
+ create mode 100644 index.html
+ create mode 100644 styles.css
+/workspace/-plan$ /bin/bash -lc 'nl -ba index.html && nl -ba styles.css && nl -ba app.js && nl -ba README.md'
+1	<!DOCTYPE html>
+     2	<html lang="zh-CN">
+     3	  <head>
+     4	    <meta charset="UTF-8" />
+     5	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     6	    <title>工作日程与每日总结</title>
+     7	    <link rel="stylesheet" href="styles.css" />
+     8	  </head>
+     9	  <body>
+    10	    <main class="container">
+    11	      <header>
+    12	        <h1>工作日程与每日总结</h1>
+    13	        <p>把计划写下来、把结果沉淀下来，让每一天都更高效。</p>
+    14	      </header>
+    15	
+    16	      <section class="card">
+    17	        <h2>今日计划</h2>
+    18	        <form id="task-form" class="task-form">
+    19	          <input id="task-input" type="text" placeholder="输入待办事项，例如：10:00 与客户开会" required />
+    20	          <button type="submit">添加</button>
+    21	        </form>
+    22	        <ul id="task-list" class="task-list"></ul>
+    23	      </section>
+    24	
+    25	      <section class="card summary-card">
+    26	        <h2>每日总结</h2>
+    27	        <label for="summary-input">今天的收获、问题和明日改进：</label>
+    28	        <textarea
+    29	          id="summary-input"
+    30	          rows="8"
+    31	          placeholder="例如：\n1. 完成了项目A的需求评审\n2. 遇到的阻碍：...\n3. 明天优先事项：..."
+    32	        ></textarea>
+    33	        <button id="save-summary" class="save-btn">保存总</button>
+    34	        <p id="save-tip" class="save-tip" aria-live="polite"></p>
+    35	      </section>
+    36	    </main>
+    37	
+    38	    <template id="task-template">
+    39	      <li class="task-item">
+    40	        <label>
+    41	          <input type="checkbox" class="task-checkbox" />
+    42	          <span class="task-text"></span>
+    43	        </label>
+    44	        <button class="delete-btn" aria-label="删除任务">删除</button>
+    45	      </li>
+    46	    </template>
+    47	
+    48	    <script src="app.js"></script>
+    49	  </body>
+    50	</html>
+     1	:root {
+     2	  color-scheme: light;
+     3	  --bg: #f5f7fb;
+     4	  --card: #ffffff;
+     5	  --primary: #3264ff;
+     6	  --primary-dark: #244fd4;
+     7	  --text: #1f2a44;
+     8	  --muted: #7280a7;
+     9	  --border: #dce3f1;
+    10	}
+    11	
+    12	* {
+    13	  box-sizing: border-box;
+    14	}
+    15	
+    16	body {
+    17	  margin: 0;
+    18	  font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    19	  background: linear-gradient(160deg, #eef2ff, var(--bg));
+    20	  color: var(--text);
+    21	}
+    22	
+    23	.container {
+    24	  width: min(920px, 92vw);
+    25	  margin: 2rem auto 3rem;
+    26	}
+    27	
+    28	header h1 {
+    29	  margin: 0;
+    30	  font-size: clamp(1.6rem, 3vw, 2.2rem);
+    31	}
+    32	
+    33	header p {
+    34	  color: var(--muted);
+    35	  margin-top: 0.5rem;
+    36	}
+    37	
+    38	.card {
+    39	  margin-top: 1.5rem;
+    40	  background: var(--card);
+    41	  border-radius: 16px;
+    42	  padding: 1.2rem;
+    43	  border: 1px solid var(--border);
+    44	  box-shadow: 0 16px 30px rgba(50, 100, 255, 0.08);
+    45	}
+    46	
+    47	.task-form {
+    48	  display: flex;
+    49	  gap: 0.8rem;
+    50	  margin: 0.8rem 0 1rem;
+    51	}
+    52	
+    53	input[type="text"],
+    54	textarea {
+    55	  width: 100%;
+    56	  border: 1px solid var(--border);
+    57	  border-radius: 10px;
+    58	  padding: 0.8rem;
+    59	  font-size: 1rem;
+    60	  color: var(--text);
+    61	  background: #fdfdff;
+    62	}
+    63	
+    64	input[type="text"]:focus,
+    65	textarea:focus {
+    66	  outline: 2px solid color-mix(in srgb, var(--primary), white 70%);
+    67	  border-color: var(--primary);
+    68	}
+    69	
+    70	button {
+    71	  border: 0;
+    72	  border-radius: 10px;
+    73	  background: var(--primary);
+    74	  color: #fff;
+    75	  font-weight: 600;
+    76	  cursor: pointer;
+    77	  padding: 0.8rem 1.1rem;
+    78	}
+    79	
+    80	button:hover {
+    81	  background: var(--primary-dark);
+    82	}
+    83	
+    84	.task-list {
+    85	  list-style: none;
+    86	  margin: 0;
+    87	  padding: 0;
+    88	  display: grid;
+    89	  gap: 0.65rem;
+    90	}
+    91	
+    92	.task-item {
+    93	  display: flex;
+    94	  justify-content: space-between;
+    95	  align-items: center;
+    96	  gap: 0.75rem;
+    97	  border: 1px solid var(--border);
+    98	  border-radius: 10px;
+    99	  padding: 0.55rem 0.75rem;
+   100	}
+   101	
+   102	.task-item label {
+   103	  display: flex;
+   104	  align-items: center;
+   105	  gap: 0.65rem;
+   106	  flex: 1;
+   107	}
+   108	
+   109	.task-item.completed .task-text {
+   110	  text-decoration: line-through;
+   111	  color: var(--muted);
+   112	}
+   113	
+   114	.delete-btn {
+   115	  background: #eef2ff;
+   116	  color: #43538f;
+   117	  padding: 0.45rem 0.7rem;
+   118	}
+   119	
+   120	.delete-btn:hover {
+   121	  background: #dbe3ff;
+   122	}
+   123	
+   124	.summary-card label {
+   125	  display: block;
+   126	  margin-bottom: 0.5rem;
+   127	  color: var(--muted);
+   128	}
+   129	
+   130	.save-btn {
+   131	  margin-top: 0.75rem;
+   132	}
+   133	
+   134	.save-tip {
+   135	  min-height: 1.2rem;
+   136	  margin-bottom: 0;
+   137	  color: #1a7f44;
+   138	  font-size: 0.95rem;
+   139	}
+   140	
+   141	@media (max-width: 600px) {
+   142	  .task-form {
+   143	    flex-direction: column;
+   144	  }
+   145	}
+     1	const TASKS_KEY = "daily-planner-tasks";
+     2	const SUMMARY_KEY = "daily-planner-summary";
+     3	
+     4	const taskForm = document.querySelector("#task-form");
+     5	const taskInput = document.querySelector("#task-input");
+     6	const taskList = document.querySelector("#task-list");
+     7	const taskTemplate = document.querySelector("#task-template");
+     8	const summaryInput = document.querySelector("#summary-input");
+     9	const saveSummaryBtn = document.querySelector("#save-summary");
+    10	const saveTip = document.querySelector("#save-tip");
+    11	
+    12	let tasks = loadTasks();
+    13	summaryInput.value = localStorage.getItem(SUMMARY_KEY) || "";
+    14	renderTasks();
+    15	
+    16	taskForm.addEventListener("submit", (event) => {
+    17	  event.preventDefault();
+    18	  const text = taskInput.value.trim();
+    19	
+    20	  if (!text) {
+    21	    return;
+    22	  }
+    23	
+    24	  tasks.unshift({
+    25	    id: crypto.randomUUID(),
+    26	    text,
+    27	    done: false,
+    28	  });
+    29	
+    30	  saveTasks();
+    31	  renderTasks();
+    32	  taskInput.value = "";
+    33	  taskInput.focus();
+    34	});
+    35	
+    36	saveSummaryBtn.addEventListener("click", () => {
+    37	  localStorage.setItem(SUMMARY_KEY, summaryInput.value.trim());
+    38	  saveTip.textContent = `已保存：${new Date().toLocaleTimeString("zh-CN", {
+    39	    hour: "2-digit",
+    40	    minute: "2-digit",
+    41	  })}`;
+    42	});
+    43	
+    44	function loadTasks() {
+    45	  try {
+    46	    return JSON.parse(localStorage.getItem(TASKS_KEY) || "[]");
+    47	  } catch {
+    48	    return [];
+    49	  }
+    50	}
+    51	
+    52	function saveTasks() {
+    53	  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+    54	}
+    55	
+    56	function renderTasks() {
+    57	  taskList.innerHTML = "";
+    58	
+    59	  if (tasks.length === 0) {
+    60	    const empty = document.createElement("li");
+    61	    empty.textContent = "还没有任务，先写下今天最重要的三件事吧。";
+    62	    empty.style.color = "#7280a7";
+    63	    taskList.appendChild(empty);
+    64	    return;
+    65	  }
+    66	
+    67	  tasks.forEach((task) => {
+    68	    const fragment = taskTemplate.content.cloneNode(true);
+    69	    const item = fragment.querySelector(".task-item");
+    70	    const checkbox = fragment.querySelector(".task-checkbox");
+    71	    const text = fragment.querySelector(".task-text");
+    72	    const deleteBtn = fragment.querySelector(".delete-btn");
+    73	
+    74	    text.textContent = task.text;
+    75	    checkbox.checked = task.done;
+    76	    item.classList.toggle("completed", task.done);
+    77	
+    78	    checkbox.addEventListener("change", () => {
+    79	      task.done = checkbox.checked;
+    80	      item.classList.toggle("completed", task.done);
+    81	      saveTasks();
+    82	    });
+    83	
+    84	    deleteBtn.addEventListener("click", () => {
+    85	      tasks = tasks.filter((value) => value.id !== task.id);
+    86	      saveTasks();
+    87	      renderTasks();
+    88	    });
+    89	
+    90	    taskList.appendChild(fragment);
+    91	  });
+    92	}
+     1	# 工作日程与每日总结
+     2	
+     3	一个轻量的网页工具，帮助你记录当天日程、跟踪任务完成情况，并沉淀每日总结。
+     4	
+     5	## 功能
+     6	
+     7	- 添加今日待办任务
+     8	- 勾选任务完成状态
+     9	- 删除不再需要的任务
+    10	- 填写并保存每日总结
+    11	- 自动使用浏览器 `localStorage` 持久化内容
+    12	
+    13	## 本地运行
+    14	
+    15	直接用浏览器打开 `index.html` 即可使用。
+    16	
+    17	如果希望通过本地服务打开，也可以运行：
+    18	
+    19	```bash
+    20	python3 -m http.server 8000
+    21	```
+    22	
+    23	然后访问 <http://localhost:8000>。
