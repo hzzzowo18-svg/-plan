@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>工作日程与每日总结</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>工作日程与每日总结</h1>
+        <p>把计划写下来、把结果沉淀下来，让每一天都更高效。</p>
+      </header>
+
+      <section class="card">
+        <h2>今日计划</h2>
+        <form id="task-form" class="task-form">
+          <input id="task-input" type="text" placeholder="输入待办事项，例如：10:00 与客户开会" required />
+          <button type="submit">添加</button>
+        </form>
+        <ul id="task-list" class="task-list"></ul>
+      </section>
+
+      <section class="card summary-card">
+        <h2>每日总结</h2>
+        <label for="summary-input">今天的收获、问题和明日改进：</label>
+        <textarea
+          id="summary-input"
+          rows="8"
+          placeholder="例如：\n1. 完成了项目A的需求评审\n2. 遇到的阻碍：...\n3. 明天优先事项：..."
+        ></textarea>
+        <button id="save-summary" class="save-btn">保存总结</button>
+        <p id="save-tip" class="save-tip" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <template id="task-template">
+      <li class="task-item">
+        <label>
+          <input type="checkbox" class="task-checkbox" />
+          <span class="task-text"></span>
+        </label>
+        <button class="delete-btn" aria-label="删除任务">删除</button>
+      </li>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
